@@ -11,9 +11,9 @@ A modality-aware comparative study using protein-expression data (Mice Protein) 
 | Name | Role |
 |------|------|
 | Nirup | Team Lead / Configuration Lead  |
-| Aashin | Final Report Lead |
-| Nishan | Configuration Management Lead |
-| Rayyan | Data Management Lead |
+| Nishan | Final Report Lead |
+| Rayyan | Configuration Management Lead |
+| Aashin | Data Management Lead |
 | Aadhi | Presentation & Report Lead |
 
 ---

@@ -1,13 +1,12 @@
 import os
 import numpy as np
 import pandas as pd
-import joblib
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
 
-def preprocess_mice_data(raw_path='../data/raw/mice_protein_expression.csv', 
-                         processed_dir='../data/processed',
-                         models_dir='../models'):
+def preprocess_mice_data(raw_path='data/raw/mice_protein_expression.csv', 
+                         processed_dir='data/processed',
+                         models_dir='models'):
     """
     Cleans, imputes, and scales the Mice Protein Expression dataset.
     Saves the processed data.

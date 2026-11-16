@@ -14,6 +14,11 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
 
+# Seed
+SEED = 42
+np.random.seed(SEED)
+tf.random.set_seed(SEED)
+
 # Dataset path
 PATH = "data/raw/bloodmnist_128.npz"
 
@@ -47,7 +52,8 @@ prep_dataTrain = ImageDataGenerator(
     rotation_range=10,
     width_shift_range=0.05,
     height_shift_range=0.05,
-    zoom_range=0.10
+    zoom_range=0.10,
+    seed=SEED
 )
 
 prep_val = ImageDataGenerator(
@@ -64,6 +70,7 @@ train_data = prep_dataTrain.flow(
     train_labels,
     batch_size=32,
     shuffle=True,
+    seed=SEED
 )
 
 val_data = prep_val.flow(

@@ -1,9 +1,11 @@
 # Imports
+import pandas as pd
 import numpy as np
 import tensorflow as tf
 
 # Data preprocessing
 from sklearn.utils.class_weight import compute_class_weight
+from sklearn.metrics import classification_report, f1_score
 
 # Model
 from tensorflow.keras.applications import ResNet50
@@ -52,8 +54,7 @@ prep_dataTrain = ImageDataGenerator(
     rotation_range=10,
     width_shift_range=0.05,
     height_shift_range=0.05,
-    zoom_range=0.10,
-    seed=SEED
+    zoom_range=0.10
 )
 
 prep_val = ImageDataGenerator(
@@ -138,3 +139,19 @@ history = model.fit(
     class_weight=class_weights,
     callbacks=[early_stopping, checkpoint]
 )
+
+
+# Save training history for report figures
+pd.DataFrame(history.history).to_csv('results/EfficentNetB5_tl.csv', index=False)
+
+# Final evaluation on the held-out test set
+test_loss, test_accuracy = model.evaluate(test_data)
+print(f"Test loss: {test_loss:.4f}")
+print(f"Test accuracy: {test_accuracy:.4f}")
+
+y_pred = np.argmax(model.predict(test_data), axis=1)
+
+print(classification_report(test_labels, y_pred, target_names=CLASS_NAMES))
+
+macro_f1 = f1_score(test_labels, y_pred, average='macro')
+print(f"Macro F1: {macro_f1:.4f}")

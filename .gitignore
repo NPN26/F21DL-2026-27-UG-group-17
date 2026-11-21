@@ -4,3 +4,6 @@
 /.conda
 /.venv
 */__pycache__
+/figures
+/models
+/results

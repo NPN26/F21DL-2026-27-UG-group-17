@@ -125,7 +125,7 @@ early_stopping = EarlyStopping(
 )
 
 checkpoint = ModelCheckpoint(
-    'models/ResNet50_fine_tuned.keras',
+    'models/ResNet50_tl.keras',
     monitor='val_loss',
     save_best_only=True,
     verbose=1
@@ -142,7 +142,7 @@ history = model.fit(
 
 
 # Save training history for report figures
-pd.DataFrame(history.history).to_csv('results/EfficentNetB5_tl.csv', index=False)
+pd.DataFrame(history.history).to_csv('results/ResNet50_history.csv', index=False)
 
 # Final evaluation on the held-out test set
 test_loss, test_accuracy = model.evaluate(test_data)

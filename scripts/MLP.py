@@ -29,7 +29,11 @@ tf.random.set_seed(SEED)
 # Dataset path
 PATH = "data/raw/bloodmnist_128.npz"
 
-df_raw = np.load(PATH)
+# Load the dataset
+try:
+    df_raw = np.load(PATH, allow_pickle=True)
+except FileNotFoundError:
+    raise FileNotFoundError(f"Dataset not found at {PATH}. Please ensure the file exists.")
 
 # Input resolution
 # 32 x 32 x 3 = 3,072 flattened features (matches the architecture spec).

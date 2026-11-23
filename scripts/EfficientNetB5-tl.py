@@ -1,4 +1,6 @@
 # Imports
+import os
+
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -24,7 +26,11 @@ tf.random.set_seed(SEED)
 # Dataset path
 PATH = "data/raw/bloodmnist_128.npz"
 
-df_raw = np.load(PATH)
+# Load the dataset
+try:
+    df_raw = np.load(PATH, allow_pickle=True)
+except FileNotFoundError:
+    raise FileNotFoundError(f"Dataset not found at {PATH}. Please ensure the file exists.")
 
 # Assigning the data and labels
 TRAIN = df_raw['train_images']
@@ -116,6 +122,9 @@ model.compile(
 )
 
 model.summary()
+
+os.makedirs('models', exist_ok=True)
+os.makedirs('results', exist_ok=True)
 
 # Early stopping and model checkpointing
 early_stopping = EarlyStopping(

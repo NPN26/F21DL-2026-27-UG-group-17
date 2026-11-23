@@ -31,6 +31,7 @@ FIGURES_DIR = 'figures'
 def main():
     # Ensure output directories exist
     os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
+    os.makedirs(FIGURES_DIR, exist_ok=True)
     
     # Data Loading
     print(f"Loading data from {RAW_DATA_PATH}...")

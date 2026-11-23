@@ -168,7 +168,7 @@ history = model.fit(
 )
 
 # Save training history for report figures
-pd.DataFrame(history.history).to_csv('results/MLP_custom_history.csv', index=False)
+pd.DataFrame(history.history).to_csv('results/MLP_history.csv', index=False)
 
 # Final evaluation on the held-out test set
 test_loss, test_accuracy = model.evaluate(test_data)

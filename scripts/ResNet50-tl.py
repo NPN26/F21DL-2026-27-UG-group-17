@@ -1,9 +1,11 @@
 # Imports
+import pandas as pd
 import numpy as np
 import tensorflow as tf
 
 # Data preprocessing
 from sklearn.utils.class_weight import compute_class_weight
+from sklearn.metrics import classification_report, f1_score
 
 # Model
 from tensorflow.keras.applications import ResNet50
@@ -13,6 +15,11 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
+
+# Seed
+SEED = 42
+np.random.seed(SEED)
+tf.random.set_seed(SEED)
 
 # Dataset path
 PATH = "data/raw/bloodmnist_128.npz"
@@ -64,6 +71,7 @@ train_data = prep_dataTrain.flow(
     train_labels,
     batch_size=32,
     shuffle=True,
+    seed=SEED
 )
 
 val_data = prep_val.flow(
@@ -117,7 +125,7 @@ early_stopping = EarlyStopping(
 )
 
 checkpoint = ModelCheckpoint(
-    'models/ResNet50_fine_tuned.keras',
+    'models/ResNet50_tl.keras',
     monitor='val_loss',
     save_best_only=True,
     verbose=1
@@ -131,3 +139,19 @@ history = model.fit(
     class_weight=class_weights,
     callbacks=[early_stopping, checkpoint]
 )
+
+
+# Save training history for report figures
+pd.DataFrame(history.history).to_csv('results/ResNet50_history.csv', index=False)
+
+# Final evaluation on the held-out test set
+test_loss, test_accuracy = model.evaluate(test_data)
+print(f"Test loss: {test_loss:.4f}")
+print(f"Test accuracy: {test_accuracy:.4f}")
+
+y_pred = np.argmax(model.predict(test_data), axis=1)
+
+print(classification_report(test_labels, y_pred, target_names=CLASS_NAMES))
+
+macro_f1 = f1_score(test_labels, y_pred, average='macro')
+print(f"Macro F1: {macro_f1:.4f}")

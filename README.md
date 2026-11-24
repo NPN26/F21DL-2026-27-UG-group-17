@@ -12,23 +12,10 @@ A modality-aware comparative study using protein-expression data (Mice Protein) 
 |------|------|
 | Nirup | Team Lead / Configuration Lead  |
 | Nishan | Final Report Lead |
-| Rayyan | Configuration Management Lead |
+| Rayyan | Data Management Lead |
 | Aashin | Data Management Lead |
-| Aadhi | Presentation & Report Lead |
+| Aadhi | Presentation & Lead / Report |
 
----
-
-## 🎯 Research Objectives
-
-- Investigate how **model choice** affects multi-class classification across fundamentally different biomedical data modalities.
-- Determine whether interpretable traditional ML (Decision Trees, k-NN, Naïve Bayes) is sufficient for high-dimensional tabular biological data.
-- Evaluate whether Convolutional Neural Networks (CNNs) are necessary to capture spatial hierarchies in 128×128 cellular morphology images.
-- Provide a rigorous, fair comparison using consistent evaluation metrics (Macro-F1, confusion matrices) rather than simply maximising accuracy.
-
-**Research Question:**
-> *How does model choice affect multi-class classification across different biomedical data types?*
-
----
 
 ## 📦 Dataset Sources & Licences
 
@@ -66,20 +53,14 @@ A modality-aware comparative study using protein-expression data (Mice Protein) 
 
 ### Mice Protein — 2 Sample Rows
 
-| MouseID | DYRK1A_N | ITSN1_N | BDNF_N | NR1_N | pAKT_N | S6_N | Genotype |
-|---------|----------|---------|--------|-------|--------|------|----------|
-| 309_M | 0.503644 | 0.747789 | 0.390665 | 0.658293 | 0.349068 | 0.518536 | c-CS-s |
-| 310_M | 0.514617 | 0.695239 | 0.430126 | 0.669340 | 0.354986 | 0.504261 | c-CS-s |
+DYRK1A_N | ITSN1_N | BDNF_N | NR1_N | pAKT_N | S6_N | Genotype |
+----------|---------|--------|-------|--------|------|----------|
+|0.503644 | 0.747789 | 0.390665 | 0.658293 | 0.349068 | 0.518536 | c-CS-s |
+| 0.514617 | 0.695239 | 0.430126 | 0.669340 | 0.354986 | 0.504261 | c-CS-s |
 
-### BloodMNIST+ — 2 Sample Images
+### BloodMNIST+
 
-<!-- Replace these with actual image links from your repo -->
-![Neutrophil Example](documentation/images/bloodmnist_neutrophil.png)
-![Eosinophil Example](documentation/images/bloodmnist_eosinophil.png)
-
-> *Left: Neutrophil (multi-lobed nucleus visible at 128×128). Right: Eosinophil (distinct granule texture). Both at 128×128 RGB.*
-
----
+BloodMNIST+ image examples and class distributions are explored in [`notebooks/02_bloodmnist_eda.ipynb`](notebooks/02_bloodmnist_eda.ipynb).
 
 ## Installation
 
@@ -99,16 +80,15 @@ pip install -r requirements.txt
 ### `requirements.txt` (versions pinned)
 
 ```text
-numpy==1.26.4
-pandas==2.2.1
-scikit-learn==1.4.1
-matplotlib==3.8.3
+joblib==1.4.2
+matplotlib==3.11.2
+medmnist==3.0.2
+numpy==2.5.5
+pandas==3.1.1
+scikit_learn==1.9.1
 seaborn==0.13.2
-torch==2.2.1
-torchvision==0.17.1
-Pillow==10.2.0
-jupyter==1.0.0
-medmnist==3.0.1
+tensorflow==2.21.0
+ucimlrepo==0.0.7
 ```
 
 ---
@@ -127,15 +107,10 @@ python scripts/download_data.py
 
 | Step | Action |
 |------|--------|
-| 1 | Downloads BloodMNIST+ (128×128) `.npz` files from MedMNIST servers |
+| 1 | Creates required local data directories |
 | 2 | Downloads Mice Protein CSV from UCI archive |
-| 3 | Verifies checksums / file integrity |
-| 4 | Extracts into `data/raw/` |
-| 5 | Splits into train/val/test sets → `data/processed/` |
-
-> **Important:** `data/raw/` and `data/processed/` are listed in `.gitignore`. Run the script before opening any notebooks.
-
----
+| 3 | Downloads BloodMNIST+ (128×128) `.npz` files from MedMNIST servers |
+| 4 | Saves downloaded datasets under `data/raw/` |
 
 ## Course Requirements & Locations
 
@@ -147,11 +122,9 @@ python scripts/download_data.py
 
 | Task | Notebook Location |
 |------|-------------------|
-| Tabular EDA & Clustering | [`notebooks/01_tabular_eda_clustering.ipynb`](notebooks/01_tabular_eda_clustering.ipynb) |
-| Image Preprocessing & EDA | [`notebooks/02_image_preprocessing.ipynb`](notebooks/02_image_preprocessing.ipynb) |
-
-<!-- Add a figure here once complete -->
-<!-- ![PCA Scatter](documentation/images/pca_scatter.png) -->
+| Tabular EDA | [`notebooks/01_mice_protien_eda.ipynb`](notebooks/01_mice_protien_eda.ipynb) |
+| Seperate PCA & Clustering | [`notebooks/clustering.ipynb`](notebooks/clustering.ipynb) |
+| Image Preprocessing & EDA | [`notebooks/02_bloodmnist_eda.ipynb`](notebooks/02_bloodmnist_eda.ipynb) |
 
 ---
 
@@ -166,7 +139,7 @@ python scripts/download_data.py
 | Decision Tree | TBD | TBD | Interpretable biological rules |
 | k-NN | TBD | TBD | Distance-based, requires scaling |
 | Naïve Bayes | TBD | TBD | Probabilistic baseline |
-| Random Forest | TBD | TBD | Ensemble comparison |
+
 
 **Decision Tree Practical Application:**
 > For the Mice Protein dataset, Decision Trees extract interpretable biological rules (e.g., "IF DYRK1A_N > 0.52 AND S6_N < 0.48 THEN class = c-CS-s"). This is directly valuable for biologists identifying protein-expression thresholds linked to specific genetic conditions, unlike the 'black-box' nature of CNNs on images.
@@ -175,37 +148,36 @@ Location: [`notebooks/03_traditional_ml_baselines.ipynb`](notebooks/03_tradition
 
 ---
 
-### R4 — Neural Networks 
-> *Implement MLP and CNN models. Train, fine-tune, and compare against traditional ML.*
+### R4: Neural Networks 
+> *Implement custom MLP and CNN models and compare their performance on biomedical images.*
 
-**Inputs (MLP):** Scaled 77 protein features  
+**Inputs (MLP):** BloodMNIST+ RGB images (resized in the MLP script)  
 **Inputs (CNN):** 128×128×3 RGB images  
 **Outputs:** Predicted class (1 of 8)
 
-| Model | Dataset | Accuracy | Macro-F1 | Notes |
+| Model | Input | Accuracy | Macro-F1 | Notes |
 |-------|---------|----------|----------|-------|
-| MLP | Mice Protein | TBD | TBD | Tabular neural baseline |
-| Custom CNN | BloodMNIST+ | TBD | TBD | Spatial feature extraction |
-| ResNet-18 (fine-tuned) | BloodMNIST+ | TBD | TBD | Transfer learning |
+| MLP | BloodMNIST+ (32x32 resized) | 0.852 | 0.836 | Fully connected custom neural network |
+| ResNet-50 | BloodMNIST+ (128x128) | 0.956 | 0.955 | Pretrained CNN feature extractor |
+| EfficientNetB5 | BloodMNIST+ (128x128) | 0.893 | 0.886 | Pretrained CNN feature extractor |
 
-Location: [`notebooks/04_neural_networks.ipynb`](notebooks/04_neural_networks.ipynb)
+Location: [`notebooks/compare_models_imaging.ipynb`](notebooks/compare_models_imaging.ipynb)
 
-<!-- Add a figure here once complete -->
-<!-- ![Training Curves](documentation/images/training_curves.png) -->
+Training scripts: [`MLP`](scripts/MLP.py), [`ResNet50`](scripts/ResNet50-tl.py), [`EfficientNetB5`](scripts/EfficientNetB5-tl.py).
 
----
+Training histories are stored in [`results folder`](results/).
 
 ## Project Milestones
 
 | Milestone | Target Week | Requirement | Status |
 |-----------|-------------|-------------|--------|
 | Dataset selection & D1 Pitch | Week 4 | R1 | ✅ Complete |
-| Automated data pipeline built | Week 5 | R2 | 🔄 In Progress |
-| EDA, Preprocessing & Clustering complete | Week 6 | R2 | ⬜ Pending |
-| Traditional ML baselines trained | Week 7 | R3 | ⬜ Pending |
-| MLP + CNN implemented | Week 9 | R4 | ⬜ Pending |
-| Evaluation & error analysis | Week 10 | R3/R4 | ⬜ Pending |
-| Final Report & Code frozen | Week 11 | All | ⬜ Pending |
+| Automated data pipeline built | Week 5-6 | R2 | ✅ Complete |
+| EDA, Preprocessing & Clustering complete | Week 6-7 | R2 | ✅ Complete |
+| Traditional ML baselines trained | Week 8-10 | R3 | ✅ Complete |
+| MLP + CNN implemented | Week 8-10 | R4 | ✅ Complete |
+| Evaluation & error analysis | Week 10-11 | R3/R4 | ✅ Complete |
+| Final Report & Code frozen | Week 10-11 | All | ✅ Complete |
 | D3 Presentation prep | Week 12 | All | ⬜ Pending |
 
 ---
@@ -213,33 +185,45 @@ Location: [`notebooks/04_neural_networks.ipynb`](notebooks/04_neural_networks.ip
 ## 📁 Repository Structure
 
 ```
-├── data/
-│   ├── raw/                    # Auto-downloaded (in .gitignore)
-│   └── processed/              # Train/val/test splits (in .gitignore)
+├── data/ (after running download_data.py)
+│   └── raw/
+│       ├── mice_protein_expression.csv
+│       └── bloodmnist_128.npz
+├── figures/ (stores mice protein training and evaluation analysis images)
+├── models/ (created after running any of the Ml/CNN scripts)
 ├── notebooks/
-│   ├── 01_tabular_eda_clustering.ipynb
-│   ├── 02_image_preprocessing.ipynb
-│   ├── 03_traditional_ml_baselines.ipynb
-│   └── 04_neural_networks.ipynb
+│   ├── 01_mice_protien_eda.ipynb
+│   ├── 02_bloodmnist_eda.ipynb
+│   ├── clustering.ipynb
+│   ├── decision_trees.ipynb
+│   ├── knn.ipynb
+│   ├── compare_models.ipynb
+│   └── compare_models_imaging.ipynb
 ├── scripts/
-│   ├── download_data.py        # Automated data pipeline
-│   └── train.py                # Model training script
-├── documentation/
-│   ├── images/                 # Saved figures for README/report
-│   └── meetings/               # Weekly meeting notes
+│   ├── download_data.py
+│   ├── data_pipeline.py
+│   ├── decision_tree.py
+│   ├── knn.py
+│   ├── naive_bayes.py
+│   ├── MLP.py
+│   ├── ResNet50-tl.py
+│   └── EfficientNetB5-tl.py
+├── results/
+│   ├── figures/ (stores imaging models evaluation analysis images)
+│   ├── MLP_history.csv
+│   ├── ResNet50_history.csv
+│   └── EfficientNetB5_history.csv
 ├── requirements.txt
 ├── .gitignore
 └── README.md                   # ← You are here
 ```
 
----
-
 ## Development Process
 
-- **Version Control:** GitHub. All work committed via feature branches → Pull Requests → Merge.
-- **Meetings:** Weekly during lab sessions. Notes stored in `documentation/meetings/`.
-- **Code Reviews:** All PRs require at least one review before merging.
-- **Reproducibility:** Random seeds set (`torch.manual_seed(42)`, `np.random.seed(42)`). All dependencies pinned in `requirements.txt`.
+- **Version Control:** GitHub, using commits and merges to manage team contributions.
+- **Meetings:** Team coordination during project development.
+- **Code Reviews:** Team members review and integrate contributions.
+- **Reproducibility:** Fixed random seeds used in the model scripts where applicable. Dependencies are listed in `requirements.txt`.
 
 ---
 
@@ -251,10 +235,4 @@ Location: [`notebooks/04_neural_networks.ipynb`](notebooks/04_neural_networks.ip
 
 ---
 
-## Generative AI Disclaimer
 
-Where Generative AI has been used to assist with code generation (permitted under Framework Statement 6 of the course policy), this is explicitly noted in code comments with the full prompt used. All AI-generated code has been independently evaluated and verified by the contributing team member.
-
----
-
-*Last updated: 9 October 2026 • Maintained by: Nirup Nandish*

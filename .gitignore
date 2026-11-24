@@ -5,7 +5,3 @@
 /.venv
 */__pycache__
 /models
-/figures
-/results/figures
-/results/r4_overall_results.csv
-/results/r4_per_class_f1.csv

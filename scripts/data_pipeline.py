@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 # Reproducibility
 SEED = 42
@@ -102,22 +102,27 @@ def get_train_val_test_split(
 def prepare_eda_data(
     raw_path: Path | str = RAW_DATA_PATH,
     save: bool = True,
-    filename: str = "mice_protein_eda.csv",
+    filename: str = "mice_protein_processed.csv",
 ) -> pd.DataFrame:
     """
     Prepare a globally imputed + standardised matrix for EDA, PCA and K-Means.
     Appends `class_name` for colouring plots (never used as a model input).
     """
-    X, y = load_raw_data(raw_path)
+    X, y_raw = load_raw_data(raw_path)
 
     imputer = SimpleImputer(strategy="median")
     X_imp = pd.DataFrame(imputer.fit_transform(X), columns=X.columns, index=X.index)
 
     scaler = StandardScaler()
     X_scaled = pd.DataFrame(scaler.fit_transform(X_imp), columns=X.columns, index=X.index)
+    
+    label_encoder = LabelEncoder()
+    y = label_encoder.fit_transform(y_raw)
 
     eda_df = X_scaled.copy()
-    eda_df["class_name"] = y.values
+    print(y)
+    eda_df["class_encoded"] = y
+    eda_df["class_name"] = y_raw.values
 
     if save:
         PROCESSED_DIR.mkdir(parents=True, exist_ok=True)

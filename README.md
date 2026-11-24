@@ -136,15 +136,20 @@ python scripts/download_data.py
 
 | Model | Accuracy | Macro-F1 | Notes |
 |-------|----------|----------|-------|
-| Decision Tree | TBD | TBD | Interpretable biological rules |
-| k-NN | TBD | TBD | Distance-based, requires scaling |
-| Naïve Bayes | TBD | TBD | Probabilistic baseline |
+| Decision Tree | 0.802 | 0.799 | Interpretable biological rules |
+| k-NN | 0.969 | 0.969 | Distance-based, requires scaling |
+| Naïve Bayes | 0.716 | 0.718 | Probabilistic baseline |
+
+
+![compare_overall.png](./figures/compare_overall.png)
 
 
 **Decision Tree Practical Application:**
 > For the Mice Protein dataset, Decision Trees extract interpretable biological rules (e.g., "IF DYRK1A_N > 0.52 AND S6_N < 0.48 THEN class = c-CS-s"). This is directly valuable for biologists identifying protein-expression thresholds linked to specific genetic conditions, unlike the 'black-box' nature of CNNs on images.
 
-Location: [`notebooks/03_traditional_ml_baselines.ipynb`](notebooks/03_traditional_ml_baselines.ipynb)
+Locations: [`notebooks/decision_trees.ipynb`](notebooks/decision_trees.ipynb), [`notebooks/knn.ipynb`](notebooks/knn.ipynb), [`notebooks/compare_models.ipynb`](notebooks/compare_models.ipynb)
+
+Training scripts: [`scripts/decision_tree.py`](scripts/decision_tree.py), [`scripts/knn.py`](scripts/knn.py),[`scripts/naive_bayes.py`](scripts/naive_bayes.py)
 
 ---
 
@@ -160,6 +165,10 @@ Location: [`notebooks/03_traditional_ml_baselines.ipynb`](notebooks/03_tradition
 | MLP | BloodMNIST+ (32x32 resized) | 0.852 | 0.836 | Fully connected custom neural network |
 | ResNet-50 | BloodMNIST+ (128x128) | 0.956 | 0.955 | Pretrained CNN feature extractor |
 | EfficientNetB5 | BloodMNIST+ (128x128) | 0.893 | 0.886 | Pretrained CNN feature extractor |
+
+
+![r4_compare_overall.png](./results/figures/r4_compare_overall.png)
+
 
 Location: [`notebooks/compare_models_imaging.ipynb`](notebooks/compare_models_imaging.ipynb)
 
@@ -210,6 +219,8 @@ Training histories are stored in [`results folder`](results/).
 │   └── EfficientNetB5-tl.py
 ├── results/
 │   ├── figures/ (stores imaging models evaluation analysis images)
+|   ├── r4_overall_results.csv
+|   ├── r4_per_class_f1.csv
 │   ├── MLP_history.csv
 │   ├── ResNet50_history.csv
 │   └── EfficientNetB5_history.csv
